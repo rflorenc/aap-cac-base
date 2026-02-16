@@ -8,6 +8,10 @@ controller_inventories:
     organization: MigrateMe-Ops
     description: Development network devices
 
+  - name: Dev Localhost
+    organization: MigrateMe-Ops
+    description: Localhost inventory
+
 controller_hosts:
   # Dev App Inventory hosts
   - name: dev-web-01.lab.local
@@ -27,6 +31,12 @@ controller_hosts:
     variables:
       ansible_host: 192.168.10.21
       db_port: 5432
+
+  # Dev Localhost
+  - name: localhost
+    inventory: Dev Localhost
+    variables:
+      ansible_connection: local
 
   # Dev Network Inventory hosts
   - name: dev-switch-01.lab.local

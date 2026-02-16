@@ -15,3 +15,11 @@ controller_projects:
     scm_branch: main
     scm_update_on_launch: true
     description: Ops automation playbooks for dev
+
+  - name: AAP CaC Base
+    organization: MigrateMe-Ops
+    scm_type: git
+    scm_url: https://github.com/rflorenc/aap-cac-base.git
+    scm_branch: main
+    scm_update_on_launch: true
+    description: AAP Configuration as Code playbooks

@@ -44,7 +44,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 AWX_HOST = os.environ.get("AWX_HOST", "http://awx.lab.local:32000")
 API_BASE = f"{AWX_HOST}/api/v2"
 USERNAME = os.environ.get("AWX_USERNAME", "admin")
-PASSWORD = os.environ.get("AWX_PASSWORD", "0NVLItg1LUsEH0Jsda5BZsgsVlArgaQL")
+PASSWORD = os.environ.get("AWX_PASSWORD", "changeme")
 
 # ---------------------------------------------------------------------------
 # Sample data definitions – edit these to change what gets created

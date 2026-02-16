@@ -43,6 +43,13 @@ controller_templates:
       - Dev Machine Credential
     description: Audit dev network devices
 
+  - name: Dev - Ping AWX
+    organization: MigrateMe-Ops
+    project: AAP CaC Base
+    inventory: Dev Localhost
+    playbook: playbooks/ping-awx.yaml
+    description: Ping AWX API to verify connectivity
+
 controller_workflows:
   - name: Dev - Full Deploy Pipeline
     organization: MigrateMe-Corp
