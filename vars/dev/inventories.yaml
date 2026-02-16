@@ -1,0 +1,63 @@
+---
+controller_inventories:
+  - name: Dev App Inventory
+    organization: MigrateMe-Corp
+    description: Development application servers
+
+  - name: Dev Network Inventory
+    organization: MigrateMe-Ops
+    description: Development network devices
+
+controller_hosts:
+  # Dev App Inventory hosts
+  - name: dev-web-01.lab.local
+    inventory: Dev App Inventory
+    variables:
+      ansible_host: 192.168.10.11
+      http_port: 8080
+
+  - name: dev-web-02.lab.local
+    inventory: Dev App Inventory
+    variables:
+      ansible_host: 192.168.10.12
+      http_port: 8080
+
+  - name: dev-db-01.lab.local
+    inventory: Dev App Inventory
+    variables:
+      ansible_host: 192.168.10.21
+      db_port: 5432
+
+  # Dev Network Inventory hosts
+  - name: dev-switch-01.lab.local
+    inventory: Dev Network Inventory
+    variables:
+      ansible_network_os: cisco.ios.ios
+      ansible_connection: network_cli
+
+  - name: dev-router-01.lab.local
+    inventory: Dev Network Inventory
+    variables:
+      ansible_network_os: cisco.ios.ios
+      ansible_connection: network_cli
+
+controller_groups:
+  - name: webservers
+    inventory: Dev App Inventory
+    description: Web server group
+    hosts:
+      - dev-web-01.lab.local
+      - dev-web-02.lab.local
+
+  - name: databases
+    inventory: Dev App Inventory
+    description: Database server group
+    hosts:
+      - dev-db-01.lab.local
+
+  - name: network_devices
+    inventory: Dev Network Inventory
+    description: All network devices
+    hosts:
+      - dev-switch-01.lab.local
+      - dev-router-01.lab.local

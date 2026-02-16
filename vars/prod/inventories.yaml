@@ -1,0 +1,84 @@
+---
+controller_inventories:
+  - name: Prod App Inventory
+    organization: MigrateMe-Corp
+    description: Production application servers
+
+  - name: Prod Network Inventory
+    organization: MigrateMe-Ops
+    description: Production network devices
+
+controller_hosts:
+  # Prod App Inventory hosts
+  - name: prod-web-01.lab.local
+    inventory: Prod App Inventory
+    variables:
+      ansible_host: 10.0.1.11
+      http_port: 443
+
+  - name: prod-web-02.lab.local
+    inventory: Prod App Inventory
+    variables:
+      ansible_host: 10.0.1.12
+      http_port: 443
+
+  - name: prod-web-03.lab.local
+    inventory: Prod App Inventory
+    variables:
+      ansible_host: 10.0.1.13
+      http_port: 443
+
+  - name: prod-db-01.lab.local
+    inventory: Prod App Inventory
+    variables:
+      ansible_host: 10.0.1.21
+      db_port: 5432
+
+  - name: prod-db-02.lab.local
+    inventory: Prod App Inventory
+    variables:
+      ansible_host: 10.0.1.22
+      db_port: 5432
+
+  # Prod Network Inventory hosts
+  - name: prod-switch-core-01.lab.local
+    inventory: Prod Network Inventory
+    variables:
+      ansible_network_os: cisco.ios.ios
+      ansible_connection: network_cli
+
+  - name: prod-router-gw-01.lab.local
+    inventory: Prod Network Inventory
+    variables:
+      ansible_network_os: cisco.ios.ios
+      ansible_connection: network_cli
+
+  - name: prod-fw-01.lab.local
+    inventory: Prod Network Inventory
+    variables:
+      ansible_network_os: cisco.asa.asa
+      ansible_connection: network_cli
+
+controller_groups:
+  - name: webservers
+    inventory: Prod App Inventory
+    description: Production web servers
+    hosts:
+      - prod-web-01.lab.local
+      - prod-web-02.lab.local
+      - prod-web-03.lab.local
+
+  - name: databases
+    inventory: Prod App Inventory
+    description: Production database servers
+    hosts:
+      - prod-db-01.lab.local
+      - prod-db-02.lab.local
+
+  - name: network_devices
+    inventory: Prod Network Inventory
+    description: All production network devices
+    hosts:
+      - prod-switch-core-01.lab.local
+      - prod-router-gw-01.lab.local
+      - prod-fw-01.lab.local

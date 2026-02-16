@@ -1,0 +1,12 @@
+---
+collections:
+  # AAP 2.5+ modules (may already be in base image, pinned here for consistency)
+  - name: ansible.controller
+  - name: ansible.platform
+
+  # CaC dispatch + all resource roles
+  - name: infra.aap_configuration
+
+  # Utilities
+  - name: infra.aap_utilities
+...

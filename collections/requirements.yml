@@ -1,0 +1,8 @@
+---
+collections:
+  # Red Hat certified (require EE or Automation Hub)
+  - name: ansible.controller
+  - name: ansible.platform
+
+  # Community / Galaxy
+  - name: infra.aap_configuration

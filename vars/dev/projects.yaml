@@ -1,0 +1,17 @@
+---
+controller_projects:
+  - name: Dev Sample Playbooks
+    organization: MigrateMe-Corp
+    scm_type: git
+    scm_url: https://github.com/ansible-tmm/instruqt-wyfp.git
+    scm_branch: main
+    scm_update_on_launch: true
+    description: Sample playbooks for development
+
+  - name: Dev Ops Playbooks
+    organization: MigrateMe-Ops
+    scm_type: git
+    scm_url: https://github.com/ansible-tmm/instruqt-wyfp.git
+    scm_branch: main
+    scm_update_on_launch: true
+    description: Ops automation playbooks for dev

@@ -1,0 +1,27 @@
+---
+aap_teams:
+  # MigrateMe-Corp teams
+  - name: DevOps
+    organization: MigrateMe-Corp
+    description: DevOps engineering team
+
+  - name: DBA
+    organization: MigrateMe-Corp
+    description: Database administration team
+
+  - name: Security
+    organization: MigrateMe-Corp
+    description: Security and compliance team
+
+  - name: App Development
+    organization: MigrateMe-Corp
+    description: Application development team
+
+  # MigrateMe-Ops teams
+  - name: Network Operations
+    organization: MigrateMe-Ops
+    description: Network operations team
+
+  - name: Infrastructure
+    organization: MigrateMe-Ops
+    description: Infrastructure engineering team

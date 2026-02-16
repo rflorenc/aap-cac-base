@@ -1,0 +1,7 @@
+---
+aap_organizations:
+  - name: MigrateMe-Corp
+    description: Primary engineering organization
+
+  - name: MigrateMe-Ops
+    description: Operations team organization

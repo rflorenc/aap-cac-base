@@ -1,0 +1,68 @@
+---
+controller_templates:
+  - name: Prod - Hello World
+    organization: MigrateMe-Corp
+    project: Prod Sample Playbooks
+    inventory: Prod App Inventory
+    playbook: apache.yml
+    credentials:
+      - Prod Machine Credential
+    description: Production smoke test
+    verbosity: 0
+
+  - name: Prod - Deploy App
+    organization: MigrateMe-Corp
+    project: Prod Sample Playbooks
+    inventory: Prod App Inventory
+    playbook: apache.yml
+    credentials:
+      - Prod Machine Credential
+    description: Deploy application to production
+    verbosity: 0
+    ask_variables_on_launch: true
+    limit: webservers
+
+  - name: Prod - DB Backup
+    organization: MigrateMe-Corp
+    project: Prod Sample Playbooks
+    inventory: Prod App Inventory
+    playbook: apache.yml
+    credentials:
+      - Prod Machine Credential
+      - Prod Vault Credential
+    description: Backup production databases
+    limit: databases
+
+  - name: Prod - Network Audit
+    organization: MigrateMe-Ops
+    project: Prod Ops Playbooks
+    inventory: Prod Network Inventory
+    playbook: apache.yml
+    credentials:
+      - Prod Machine Credential
+    description: Audit production network devices
+
+controller_workflows:
+  - name: Prod - Full Deploy Pipeline
+    organization: MigrateMe-Corp
+    description: Full deployment pipeline for production
+    simplified_workflow_nodes:
+      - identifier: backup_db
+        unified_job_template: Prod - DB Backup
+        success_nodes:
+          - deploy_app
+        failure_nodes: []
+        always_nodes: []
+
+      - identifier: deploy_app
+        unified_job_template: Prod - Deploy App
+        success_nodes:
+          - verify
+        failure_nodes: []
+        always_nodes: []
+
+      - identifier: verify
+        unified_job_template: Prod - Hello World
+        success_nodes: []
+        failure_nodes: []
+        always_nodes: []

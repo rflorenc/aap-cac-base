@@ -1,0 +1,20 @@
+# Copy this file to ansible.cfg and fill in your token before building the EE.
+#
+# Choose ONE of the options below depending on where your collections are hosted.
+
+[galaxy]
+server_list = automation_hub
+
+# --- Option A: Red Hat Automation Hub (console.redhat.com) ---
+# Generate an offline token at https://console.redhat.com/ansible/automation-hub/token
+[galaxy_server.automation_hub]
+url=https://console.redhat.com/api/automation-hub/content/published/
+auth_url=https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
+token=
+
+
+# --- Option B: Private Automation Hub on your AAP instance ---
+# [galaxy_server.automation_hub]
+# url=https://hub.example.com/api/galaxy/content/published/
+# token=<YOUR_PAH_API_TOKEN>
+# validate_certs=false

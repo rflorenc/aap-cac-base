@@ -1,0 +1,17 @@
+---
+controller_projects:
+  - name: Prod Sample Playbooks
+    organization: MigrateMe-Corp
+    scm_type: git
+    scm_url: https://github.com/ansible-tmm/instruqt-wyfp.git
+    scm_branch: main
+    scm_update_on_launch: false
+    description: Production playbooks (pinned to main)
+
+  - name: Prod Ops Playbooks
+    organization: MigrateMe-Ops
+    scm_type: git
+    scm_url: https://github.com/ansible-tmm/instruqt-wyfp.git
+    scm_branch: main
+    scm_update_on_launch: false
+    description: Ops automation playbooks for production

@@ -1,0 +1,68 @@
+---
+controller_templates:
+  - name: Dev - Hello World
+    organization: MigrateMe-Corp
+    project: Dev Sample Playbooks
+    inventory: Dev App Inventory
+    playbook: apache.yml
+    credentials:
+      - Dev Machine Credential
+    description: Simple hello world test
+    verbosity: 0
+
+  - name: Dev - Deploy App
+    organization: MigrateMe-Corp
+    project: Dev Sample Playbooks
+    inventory: Dev App Inventory
+    playbook: apache.yml
+    credentials:
+      - Dev Machine Credential
+    description: Deploy application to dev servers
+    verbosity: 1
+    ask_variables_on_launch: true
+    limit: webservers
+
+  - name: Dev - DB Backup
+    organization: MigrateMe-Corp
+    project: Dev Sample Playbooks
+    inventory: Dev App Inventory
+    playbook: apache.yml
+    credentials:
+      - Dev Machine Credential
+      - Dev Vault Credential
+    description: Backup dev databases
+    limit: databases
+
+  - name: Dev - Network Audit
+    organization: MigrateMe-Ops
+    project: Dev Ops Playbooks
+    inventory: Dev Network Inventory
+    playbook: apache.yml
+    credentials:
+      - Dev Machine Credential
+    description: Audit dev network devices
+
+controller_workflows:
+  - name: Dev - Full Deploy Pipeline
+    organization: MigrateMe-Corp
+    description: Full deployment pipeline for dev
+    simplified_workflow_nodes:
+      - identifier: backup_db
+        unified_job_template: Dev - DB Backup
+        success_nodes:
+          - deploy_app
+        failure_nodes: []
+        always_nodes: []
+
+      - identifier: deploy_app
+        unified_job_template: Dev - Deploy App
+        success_nodes:
+          - verify
+        failure_nodes: []
+        always_nodes: []
+
+      - identifier: verify
+        unified_job_template: Dev - Hello World
+        success_nodes: []
+        failure_nodes: []
+        always_nodes: []
