@@ -1,0 +1,19 @@
+---
+- name: Ping AWX API
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    awx_host: "http://192.168.122.126:32000"
+
+  tasks:
+    - name: "Ping AWX API"
+      ansible.builtin.uri:
+        url: "{{ awx_host }}/api/v2/ping/"
+        method: GET
+        return_content: true
+      register: ping_result
+
+    - name: "Show AWX version"
+      ansible.builtin.debug:
+        msg: "AWX {{ ping_result.json.version }} is reachable (node: {{ ping_result.json.active_node }})"

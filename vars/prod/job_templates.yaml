@@ -46,23 +46,22 @@ controller_workflows:
   - name: Prod - Full Deploy Pipeline
     organization: MigrateMe-Corp
     description: Full deployment pipeline for production
-    simplified_workflow_nodes:
+    workflow_nodes:
       - identifier: backup_db
-        unified_job_template: Prod - DB Backup
-        success_nodes:
-          - deploy_app
-        failure_nodes: []
-        always_nodes: []
-
+        unified_job_template:
+          name: Prod - DB Backup
+          type: job_template
+        related:
+          success_nodes:
+            - identifier: deploy_app
       - identifier: deploy_app
-        unified_job_template: Prod - Deploy App
-        success_nodes:
-          - verify
-        failure_nodes: []
-        always_nodes: []
-
+        unified_job_template:
+          name: Prod - Deploy App
+          type: job_template
+        related:
+          success_nodes:
+            - identifier: verify
       - identifier: verify
-        unified_job_template: Prod - Hello World
-        success_nodes: []
-        failure_nodes: []
-        always_nodes: []
+        unified_job_template:
+          name: Prod - Hello World
+          type: job_template

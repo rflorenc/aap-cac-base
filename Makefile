@@ -18,6 +18,9 @@ PROXY_FLAGS := $(if $(HTTP_PROXY),--senv HTTP_PROXY=$(HTTP_PROXY)) \
 
 .PHONY: build-ee run-dev run-prod clean-aap encrypt decrypt
 
+configure-cac:
+	ansible-playbook playbooks/configure-aap-controller.yaml -e @vars/auth.yaml -e env=dev --vault-password-file .vault-password
+
 build-ee:
 	cd ee && \
 	  HTTP_PROXY=$(HTTP_PROXY) HTTPS_PROXY=$(HTTPS_PROXY) NO_PROXY=$(NO_PROXY) \

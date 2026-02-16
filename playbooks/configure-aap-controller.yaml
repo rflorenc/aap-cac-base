@@ -1,0 +1,224 @@
+---
+
+# Usage:
+#   ansible-playbook playbooks/configure-aap-controller.yaml \
+#     -i localhost, -e @vars/auth.yaml -e env=dev --vault-password-file .vault-password
+#
+- name: Configure AAP from Code
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  environment:
+      HTTP_PROXY: "{{ http_proxy | default('') }}"
+      HTTPS_PROXY: "{{ https_proxy | default('') }}"
+      NO_PROXY: "{{ no_proxy | default('') }}"
+  vars:
+    env: dev
+
+  pre_tasks:
+    - name: "Load common vars"
+      ansible.builtin.include_vars:
+        dir: "{{ playbook_dir }}/../vars/common"
+        extensions: ['yaml', 'yml']
+      tags:
+        - always
+
+    - name: "Load environment vars ({{ env }})"
+      ansible.builtin.include_vars:
+        dir: "{{ playbook_dir }}/../vars/{{ env }}"
+        extensions: ['yaml', 'yml']
+      tags:
+        - always
+
+    - name: "Get OAuth token from Gateway"
+      ansible.builtin.uri:
+        url: "https://{{ aap_hostname }}/api/gateway/v1/tokens/"
+        user: "{{ aap_username }}"
+        password: "{{ aap_password }}"
+        method: POST
+        force_basic_auth: true
+        validate_certs: "{{ aap_validate_certs }}"
+        status_code: 201
+      register: authtoken_res
+      no_log: true
+      tags:
+        - always
+
+    - name: "Set auth facts"
+      ansible.builtin.set_fact:
+        aap_token: "{{ authtoken_res.json.token }}"
+        aap_token_url: "{{ authtoken_res.json.url }}"
+        controller_hostname: "https://{{ aap_hostname }}"
+        controller_oauthtoken: "{{ authtoken_res.json.token }}"
+      no_log: true
+      tags:
+        - always
+
+  tasks:
+    - name: "Apply configuration"
+      block:
+        - name: "Organizations"
+          ansible.controller.organization:
+            name: "{{ item.name }}"
+            description: "{{ item.description | default(omit) }}"
+            controller_host: "{{ controller_hostname }}"
+            controller_oauthtoken: "{{ controller_oauthtoken }}"
+            validate_certs: "{{ aap_validate_certs }}"
+          loop: "{{ aap_organizations | default([]) }}"
+          tags: [organizations]
+
+        - name: "Users"
+          ansible.controller.user:
+            username: "{{ item.username }}"
+            first_name: "{{ item.first_name | default(omit) }}"
+            last_name: "{{ item.last_name | default(omit) }}"
+            email: "{{ item.email | default(omit) }}"
+            password: "{{ item.password | default(omit) }}"
+            organization: "{{ item.organization | default(omit) }}"
+            controller_host: "{{ controller_hostname }}"
+            controller_oauthtoken: "{{ controller_oauthtoken }}"
+            validate_certs: "{{ aap_validate_certs }}"
+          loop: "{{ aap_user_accounts | default([]) }}"
+          no_log: true
+          tags: [users]
+
+        - name: "Teams"
+          ansible.controller.team:
+            name: "{{ item.name }}"
+            organization: "{{ item.organization }}"
+            description: "{{ item.description | default(omit) }}"
+            controller_host: "{{ controller_hostname }}"
+            controller_oauthtoken: "{{ controller_oauthtoken }}"
+            validate_certs: "{{ aap_validate_certs }}"
+          loop: "{{ aap_teams | default([]) }}"
+          tags: [teams]
+
+        - name: "Credential Types"
+          ansible.controller.credential_type:
+            name: "{{ item.name }}"
+            description: "{{ item.description | default(omit) }}"
+            kind: "{{ item.kind }}"
+            inputs: "{{ item.inputs | default(omit) }}"
+            injectors: "{{ item.injectors | default(omit) }}"
+            controller_host: "{{ controller_hostname }}"
+            controller_oauthtoken: "{{ controller_oauthtoken }}"
+            validate_certs: "{{ aap_validate_certs }}"
+          loop: "{{ controller_credential_types | default([]) }}"
+          tags: [credential_types]
+
+        # --- Credentials (var: controller_credentials) ---
+        - name: "Credentials"
+          ansible.controller.credential:
+            name: "{{ item.name }}"
+            organization: "{{ item.organization | default(omit) }}"
+            credential_type: "{{ item.credential_type }}"
+            description: "{{ item.description | default(omit) }}"
+            inputs: "{{ item.inputs | default(omit) }}"
+            controller_host: "{{ controller_hostname }}"
+            controller_oauthtoken: "{{ controller_oauthtoken }}"
+            validate_certs: "{{ aap_validate_certs }}"
+          loop: "{{ controller_credentials | default([]) }}"
+          no_log: true
+          tags: [credentials]
+
+        # --- Projects (var: controller_projects) ---
+        - name: "Projects"
+          ansible.controller.project:
+            name: "{{ item.name }}"
+            organization: "{{ item.organization }}"
+            scm_type: "{{ item.scm_type | default(omit) }}"
+            scm_url: "{{ item.scm_url | default(omit) }}"
+            scm_branch: "{{ item.scm_branch | default(omit) }}"
+            scm_update_on_launch: "{{ item.scm_update_on_launch | default(omit) }}"
+            credential: "{{ item.credential | default(omit) }}"
+            description: "{{ item.description | default(omit) }}"
+            controller_host: "{{ controller_hostname }}"
+            controller_oauthtoken: "{{ controller_oauthtoken }}"
+            validate_certs: "{{ aap_validate_certs }}"
+          loop: "{{ controller_projects | default([]) }}"
+          tags: [projects]
+
+        # --- Inventories (var: controller_inventories) ---
+        - name: "Inventories"
+          ansible.controller.inventory:
+            name: "{{ item.name }}"
+            organization: "{{ item.organization }}"
+            description: "{{ item.description | default(omit) }}"
+            controller_host: "{{ controller_hostname }}"
+            controller_oauthtoken: "{{ controller_oauthtoken }}"
+            validate_certs: "{{ aap_validate_certs }}"
+          loop: "{{ controller_inventories | default([]) }}"
+          tags: [inventories]
+
+        # --- Hosts (var: controller_hosts) ---
+        - name: "Hosts"
+          ansible.controller.host:
+            name: "{{ item.name }}"
+            inventory: "{{ item.inventory }}"
+            variables: "{{ item.variables | default(omit) }}"
+            enabled: "{{ item.enabled | default(omit) }}"
+            description: "{{ item.description | default(omit) }}"
+            controller_host: "{{ controller_hostname }}"
+            controller_oauthtoken: "{{ controller_oauthtoken }}"
+            validate_certs: "{{ aap_validate_certs }}"
+          loop: "{{ controller_hosts | default([]) }}"
+          tags: [hosts]
+
+        # --- Groups (var: controller_groups) ---
+        - name: "Groups"
+          ansible.controller.group:
+            name: "{{ item.name }}"
+            inventory: "{{ item.inventory }}"
+            description: "{{ item.description | default(omit) }}"
+            hosts: "{{ item.hosts | default(omit) }}"
+            variables: "{{ item.variables | default(omit) }}"
+            controller_host: "{{ controller_hostname }}"
+            controller_oauthtoken: "{{ controller_oauthtoken }}"
+            validate_certs: "{{ aap_validate_certs }}"
+          loop: "{{ controller_groups | default([]) }}"
+          tags: [groups]
+
+        # --- Job Templates (var: controller_templates) ---
+        - name: "Job Templates"
+          ansible.controller.job_template:
+            name: "{{ item.name }}"
+            organization: "{{ item.organization }}"
+            project: "{{ item.project }}"
+            inventory: "{{ item.inventory }}"
+            playbook: "{{ item.playbook }}"
+            # execution_environment: "{{ item.execution_environment | default(omit) }}"
+            credentials: "{{ item.credentials | default(omit) }}"
+            description: "{{ item.description | default(omit) }}"
+            verbosity: "{{ item.verbosity | default(omit) }}"
+            ask_variables_on_launch: "{{ item.ask_variables_on_launch | default(omit) }}"
+            limit: "{{ item.limit | default(omit) }}"
+            controller_host: "{{ controller_hostname }}"
+            controller_oauthtoken: "{{ controller_oauthtoken }}"
+            validate_certs: "{{ aap_validate_certs }}"
+          loop: "{{ controller_templates | default([]) }}"
+          tags: [job_templates]
+
+        # --- Workflow Job Templates (var: controller_workflows) ---
+        - name: "Workflow Job Templates"
+          ansible.controller.workflow_job_template:
+            name: "{{ item.name }}"
+            organization: "{{ item.organization }}"
+            description: "{{ item.description | default(omit) }}"
+            workflow_nodes: "{{ item.workflow_nodes | default(omit) }}"
+            controller_host: "{{ controller_hostname }}"
+            controller_oauthtoken: "{{ controller_oauthtoken }}"
+            validate_certs: "{{ aap_validate_certs }}"
+          loop: "{{ controller_workflows | default([]) }}"
+          tags: [workflows]
+
+      always:
+        - name: "Delete OAuth token"
+          ansible.builtin.uri:
+            url: "https://{{ aap_hostname }}{{ aap_token_url }}"
+            user: "{{ aap_username }}"
+            password: "{{ aap_password }}"
+            method: DELETE
+            force_basic_auth: true
+            validate_certs: "{{ aap_validate_certs }}"
+            status_code: 204
+          when: aap_token_url is defined

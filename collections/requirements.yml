@@ -5,4 +5,4 @@ collections:
   - name: ansible.platform
 
   # Community / Galaxy
-  - name: infra.aap_configuration
+#  - name: infra.aap_configuration
