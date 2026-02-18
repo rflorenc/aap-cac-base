@@ -3,7 +3,7 @@ VAULT_FILE  ?= .vault-password
 
 VAULT_FILES = vars/auth.yaml vars/dev/credentials.yaml vars/prod/credentials.yaml
 
-.PHONY: configure-dev configure-prod clean-aap encrypt decrypt
+.PHONY: configure-dev configure-prod teardown-dev teardown-prod clean-aap encrypt decrypt
 
 configure-dev:
 	ansible-playbook playbooks/configure-aap-controller.yaml \
@@ -11,6 +11,14 @@ configure-dev:
 
 configure-prod:
 	ansible-playbook playbooks/configure-aap-controller.yaml \
+	  -e @$(AUTH_FILE) -e env=prod --vault-password-file $(VAULT_FILE)
+
+teardown-dev:
+	ansible-playbook playbooks/teardown-aap-controller.yaml \
+	  -e @$(AUTH_FILE) -e env=dev --vault-password-file $(VAULT_FILE)
+
+teardown-prod:
+	ansible-playbook playbooks/teardown-aap-controller.yaml \
 	  -e @$(AUTH_FILE) -e env=prod --vault-password-file $(VAULT_FILE)
 
 clean-aap:

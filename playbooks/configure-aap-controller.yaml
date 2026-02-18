@@ -14,6 +14,7 @@
       NO_PROXY: "{{ no_proxy | default('') }}"
   vars:
     env: dev
+    state: present
 
   pre_tasks:
     - name: "Load common vars"
@@ -60,6 +61,7 @@
         - name: "Organizations"
           ansible.controller.organization:
             name: "{{ item.name }}"
+            state: "{{ state }}"
             description: "{{ item.description | default(omit) }}"
             controller_host: "{{ controller_hostname }}"
             controller_oauthtoken: "{{ controller_oauthtoken }}"
@@ -70,6 +72,7 @@
         - name: "Users"
           ansible.controller.user:
             username: "{{ item.username }}"
+            state: "{{ state }}"
             first_name: "{{ item.first_name | default(omit) }}"
             last_name: "{{ item.last_name | default(omit) }}"
             email: "{{ item.email | default(omit) }}"
@@ -85,6 +88,7 @@
         - name: "Teams"
           ansible.controller.team:
             name: "{{ item.name }}"
+            state: "{{ state }}"
             organization: "{{ item.organization }}"
             description: "{{ item.description | default(omit) }}"
             controller_host: "{{ controller_hostname }}"
@@ -96,6 +100,7 @@
         - name: "Credential Types"
           ansible.controller.credential_type:
             name: "{{ item.name }}"
+            state: "{{ state }}"
             description: "{{ item.description | default(omit) }}"
             kind: "{{ item.kind }}"
             inputs: "{{ item.inputs | default(omit) }}"
@@ -110,6 +115,7 @@
         - name: "Credentials"
           ansible.controller.credential:
             name: "{{ item.name }}"
+            state: "{{ state }}"
             organization: "{{ item.organization | default(omit) }}"
             credential_type: "{{ item.credential_type }}"
             description: "{{ item.description | default(omit) }}"
@@ -125,6 +131,7 @@
         - name: "Projects"
           ansible.controller.project:
             name: "{{ item.name }}"
+            state: "{{ state }}"
             organization: "{{ item.organization }}"
             scm_type: "{{ item.scm_type | default(omit) }}"
             scm_url: "{{ item.scm_url | default(omit) }}"
@@ -142,6 +149,7 @@
         - name: "Inventories"
           ansible.controller.inventory:
             name: "{{ item.name }}"
+            state: "{{ state }}"
             organization: "{{ item.organization }}"
             description: "{{ item.description | default(omit) }}"
             controller_host: "{{ controller_hostname }}"
@@ -154,6 +162,7 @@
         - name: "Hosts"
           ansible.controller.host:
             name: "{{ item.name }}"
+            state: "{{ state }}"
             inventory: "{{ item.inventory }}"
             variables: "{{ item.variables | default(omit) }}"
             enabled: "{{ item.enabled | default(omit) }}"
@@ -168,6 +177,7 @@
         - name: "Groups"
           ansible.controller.group:
             name: "{{ item.name }}"
+            state: "{{ state }}"
             inventory: "{{ item.inventory }}"
             description: "{{ item.description | default(omit) }}"
             hosts: "{{ item.hosts | default(omit) }}"
@@ -182,6 +192,7 @@
         - name: "Job Templates"
           ansible.controller.job_template:
             name: "{{ item.name }}"
+            state: "{{ state }}"
             organization: "{{ item.organization }}"
             project: "{{ item.project }}"
             inventory: "{{ item.inventory }}"
@@ -202,6 +213,7 @@
         - name: "Workflow Job Templates"
           ansible.controller.workflow_job_template:
             name: "{{ item.name }}"
+            state: "{{ state }}"
             organization: "{{ item.organization }}"
             description: "{{ item.description | default(omit) }}"
             workflow_nodes: "{{ item.workflow_nodes | default(omit) }}"
