@@ -51,7 +51,7 @@
         aap_token_url: "{{ authtoken_res.json.url }}"
         controller_hostname: "https://{{ aap_hostname }}"
         controller_oauthtoken: "{{ authtoken_res.json.token }}"
-      no_log: true
+      no_log: false
       tags:
         - always
 
@@ -82,7 +82,7 @@
             controller_oauthtoken: "{{ controller_oauthtoken }}"
             validate_certs: "{{ aap_validate_certs }}"
           loop: "{{ aap_user_accounts | default([]) }}"
-          no_log: true
+          no_log: false
           tags: [users]
 
         - name: "Teams"
@@ -124,7 +124,7 @@
             controller_oauthtoken: "{{ controller_oauthtoken }}"
             validate_certs: "{{ aap_validate_certs }}"
           loop: "{{ controller_credentials | default([]) }}"
-          no_log: true
+          no_log: false
           tags: [credentials]
 
         # --- Projects (var: controller_projects) ---
