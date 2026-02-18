@@ -50,6 +50,15 @@ controller_templates:
     playbook: playbooks/ping-awx.yaml
     description: Ping AWX API to verify connectivity
 
+  - name: Dev - Validate Connectivity
+    organization: MigrateMe-Corp
+    project: AAP CaC Base
+    inventory: Dev App Inventory
+    playbook: playbooks/ping-hosts.yaml
+    credentials:
+      - Dev SSH Key Credential
+    description: Validate AAP can reach all dev hosts
+
 controller_workflows:
   - name: Dev - Full Deploy Pipeline
     organization: MigrateMe-Corp

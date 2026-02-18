@@ -1,7 +1,7 @@
 AUTH_FILE   ?= vars/auth.yaml
 VAULT_FILE  ?= .vault-password
 
-VAULT_FILES = vars/auth.yaml vars/dev/credentials.yaml vars/prod/credentials.yaml
+VAULT_FILES = vars/auth.yaml vars/dev/credentials.yaml vars/dev/ssh_keys.yaml vars/prod/credentials.yaml
 
 .PHONY: configure-dev configure-prod teardown-dev teardown-prod clean-aap encrypt decrypt
 

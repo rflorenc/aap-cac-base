@@ -1,0 +1,18 @@
+---
+- name: Validate host connectivity
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: "Ping host"
+      ansible.builtin.ping:
+
+    - name: "Gather basic facts"
+      ansible.builtin.setup:
+        gather_subset:
+          - min
+      register: host_facts
+
+    - name: "Show host info"
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }} — {{ host_facts.ansible_facts.ansible_distribution | default('unknown') }} {{ host_facts.ansible_facts.ansible_distribution_version | default('') }}"

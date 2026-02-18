@@ -1,6 +1,10 @@
 ---
 aap_teams:
   # MigrateMe-Corp teams
+  - name: Unix
+    organization: MigrateMe-Corp
+    description: Unix Linux engineering team
+
   - name: DevOps
     organization: MigrateMe-Corp
     description: DevOps engineering team
