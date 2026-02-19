@@ -11,6 +11,6 @@ computer5  ansible_host=192.168.2.5  mac=00:DE:AD:C0:AE:04  room=B-1.04  locatio
 
 
 [crombeen:children]
-computerlokaal
+computerlocaal
 klaslokaal
 andere
